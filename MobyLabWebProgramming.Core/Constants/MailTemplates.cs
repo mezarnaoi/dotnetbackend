@@ -66,4 +66,47 @@ public static class MailTemplates
     </div>
 </body>
 </html>";
+    
+    
+    public static string ReviewAddTemplate(string userName, string placeName, int rating, string content) => $@"<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""utf-8"" />
+    <title>Review Added</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }}
+        h2 {{
+            color: #3c87be;
+        }}
+        p {{
+            color: #555;
+            line-height: 1.6;
+        }}
+    </style>
+</head>
+<body>
+    <div class=""container"">
+        <h2>Mulțumim pentru recenzie, {userName}!</h2>
+        <p>Ai lăsat o recenzie pentru <strong>{placeName}</strong>:</p>
+        <p><strong>Rating:</strong> {rating}/5</p>
+        <p><strong>Conținut:</strong> {content}</p>
+        <p>Recenzia ta contează și ajută alți utilizatori să ia decizii mai bune!</p>
+        <p>Toate cele bune,<br/><em>Echipa ReviewVerse</em></p>
+    </div>
+</body>
+</html>";
+
 }

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
+using MobyLabWebProgramming.Core.Constants;
 using MobyLabWebProgramming.Core.DataTransferObjects;
 using MobyLabWebProgramming.Core.Entities;
 using MobyLabWebProgramming.Core.Errors;
@@ -13,10 +14,12 @@ namespace MobyLabWebProgramming.Infrastructure.Services;
 public class ReviewService : IReviewService
 {
     private readonly WebAppDatabaseContext _dbContext;
-
-    public ReviewService(WebAppDatabaseContext dbContext)
+    private readonly IMailService _mailService;
+    
+    public ReviewService(WebAppDatabaseContext dbContext, IMailService mailService)
     {
         _dbContext = dbContext;
+        _mailService = mailService;
     }
 
     public async Task<ServiceResponse<ReviewDTO>> GetReview(Guid id)
@@ -64,6 +67,16 @@ public class ReviewService : IReviewService
 
         _dbContext.Reviews.Add(review);
         await _dbContext.SaveChangesAsync();
+        
+        // ⬇️ Fetch user & place info
+        var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == dto.UserId);
+        var place = await _dbContext.Places.AsNoTracking().FirstOrDefaultAsync(p => p.Id == dto.PlaceId);
+
+        if (user is not null && place is not null)
+        {
+            var body = MailTemplates.ReviewAddTemplate(user.Name, place.Name, dto.Rating, dto.Content);
+            await _mailService.SendMail(user.Email, "Mulțumim pentru recenzie!", body, true, "ReviewVerse");
+        }
 
         return ServiceResponse.ForSuccess();
     }

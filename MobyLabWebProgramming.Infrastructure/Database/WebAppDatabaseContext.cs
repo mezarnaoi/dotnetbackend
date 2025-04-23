@@ -25,6 +25,7 @@ public sealed class WebAppDatabaseContext : DbContext
     public DbSet<Review> Reviews { get; set; } = default!;
     
     public DbSet<Tag> Tags { get; set; } = default!;
+    public DbSet<User> Users { get; set; } = default!;
 
 
     /// <summary>

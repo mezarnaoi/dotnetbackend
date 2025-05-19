@@ -27,6 +27,8 @@ public sealed class WebAppDatabaseContext : DbContext
     public DbSet<Tag> Tags { get; set; } = default!;
     public DbSet<User> Users { get; set; } = default!;
 
+    public DbSet<Feedback> Feedbacks { get; set; } = default!;
+
 
     /// <summary>
     /// Here additional configuration for the ORM is performed.

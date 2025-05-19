@@ -19,6 +19,19 @@ namespace MobyLabWebProgramming.Infrastructure.Services.Implementations;
 public class UserService(IRepository<WebAppDatabaseContext> repository, ILoginService loginService, IMailService mailService)
     : IUserService
 {
+    
+    private readonly WebAppDatabaseContext _dbContext;
+
+    public UserService(
+        IRepository<WebAppDatabaseContext> repository,
+        ILoginService loginService,
+        IMailService mailService,
+        WebAppDatabaseContext dbContext
+    ) : this(repository, loginService, mailService)
+    {
+        _dbContext = dbContext;
+    }
+
     public async Task<ServiceResponse<UserDTO>> GetUser(Guid id, CancellationToken cancellationToken = default)
     {
         var result = await repository.GetAsync(new UserProjectionSpec(id), cancellationToken); // Get a user using a specification on the repository.
@@ -120,6 +133,24 @@ public class UserService(IRepository<WebAppDatabaseContext> repository, ILoginSe
         }
 
         await repository.DeleteAsync<User>(id, cancellationToken); // Delete the entity.
+
+        return ServiceResponse.ForSuccess();
+    }
+    
+    public async Task<ServiceResponse> AddFeedback(FeedbackDTO dto)
+    {
+        var feedback = new Feedback
+        {
+            Category = dto.Category,
+            Satisfaction = dto.Satisfaction,
+            Message = dto.Message,
+            AllowContact = dto.AllowContact,
+            Email = dto.AllowContact ? dto.Email : null,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _dbContext.Feedbacks.Add(feedback);
+        await _dbContext.SaveChangesAsync();
 
         return ServiceResponse.ForSuccess();
     }

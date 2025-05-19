@@ -18,15 +18,13 @@ public class ReviewController : AuthorizedController
     {
         _reviewService = reviewService;
     }
-
-    [Authorize(Roles = "Admin")]
+    
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<RequestResponse<ReviewDTO>>> GetById([FromRoute] Guid id)
     {
         return FromServiceResponse(await _reviewService.GetReview(id));
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<RequestResponse<PagedResponse<ReviewDTO>>>> GetPage([FromQuery] PaginationSearchQueryParams pagination)
     {
@@ -81,27 +79,6 @@ public class ReviewController : AuthorizedController
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult<RequestResponse>> Delete([FromRoute] Guid id)
     {
-        var currentUser = await GetCurrentUser();
-        
-        if (currentUser.Result == null)
-        {
-            return ErrorMessageResult(currentUser.Error);
-        }
-        
-        // Verificăm dacă review-ul există
-        var existingReview = await _reviewService.GetReview(id);
-
-        if (existingReview.Result == null)
-        {
-            return ErrorMessageResult(existingReview.Error);
-        }
-        
-        // Verificăm dacă utilizatorul curent este același cu cel care a scris recenzia
-        if (existingReview.Result.UserId != currentUser.Result.Id)
-        {
-            return Unauthorized("Nu aveți permisiunea să modificați această recenzie.");
-        }
-
         return FromServiceResponse(await _reviewService.DeleteReview(id));
     }
 }

@@ -84,4 +84,11 @@ public class UserController(IUserService userService) : AuthorizedController(use
             FromServiceResponse(await UserService.DeleteUser(id)) :
             ErrorMessageResult(currentUser.Error);
     }
+    
+    [HttpPost]
+    public async Task<ActionResult<RequestResponse>> AddFeedback([FromBody] FeedbackDTO dto)
+    {
+        var response = await UserService.AddFeedback(dto);
+        return FromServiceResponse(response);
+    }
 }

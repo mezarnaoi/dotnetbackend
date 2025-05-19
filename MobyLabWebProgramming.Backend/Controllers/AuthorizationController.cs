@@ -2,10 +2,12 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MobyLabWebProgramming.Core.DataTransferObjects;
+using MobyLabWebProgramming.Core.Entities;
 using MobyLabWebProgramming.Core.Enums;
 using MobyLabWebProgramming.Core.Handlers;
 using MobyLabWebProgramming.Core.Responses;
 using MobyLabWebProgramming.Infrastructure.Authorization;
+using MobyLabWebProgramming.Infrastructure.Database;
 using MobyLabWebProgramming.Infrastructure.Services.Implementations;
 using MobyLabWebProgramming.Infrastructure.Services.Interfaces;
 
@@ -89,5 +91,6 @@ public class AuthorizationController(IUserService userService) : BaseResponseCon
 
         return FromServiceResponse(await userService.UpdateUser(updatedUser, currentUser.Result));
     }
+    
 
 }

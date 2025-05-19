@@ -30,9 +30,12 @@ public class ReviewService : IReviewService
             .Select(r => new ReviewDTO(r.Id, r.Content, r.Rating, r.UserId, r.PlaceId, r.CreatedAt))
             .FirstOrDefaultAsync();
 
-        return (ServiceResponse<ReviewDTO>)(review is not null
-            ? ServiceResponse<ReviewDTO>.ForSuccess(review)
-            : ServiceResponse<ReviewDTO>.FromError(new ErrorMessage(HttpStatusCode.NotFound, "Recenzia nu a fost găsită.")));
+        if (review is not null)
+        {
+            return ServiceResponse<ReviewDTO>.ForSuccess(review);
+        }
+
+        return ServiceResponse<ReviewDTO>.FromError(new ErrorMessage(HttpStatusCode.NotFound, "Recenzia nu a fost găsită.")) as ServiceResponse<ReviewDTO>;
     }
 
     public async Task<ServiceResponse<PagedResponse<ReviewDTO>>> GetReviews(PaginationSearchQueryParams pagination)
